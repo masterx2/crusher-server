@@ -89,7 +89,12 @@ class HTTP:
 				frame = self.parseFrame(data)
 
 			if len(frame['payload']) == frame['size']:
-				self.client_socket.sendall(self.createFrame(frame['payload']))
+				print 'Incoming frame: ' + str(frame)
+				if frame['opcode'] == 'text':
+					if frame['payload'] == 'ping':
+						self.client_socket.sendall(self.createFrame(frame['payload'], 137))
+					else:
+						self.client_socket.sendall(self.createFrame(frame['payload']))
 				frame = False
 
 	def unmaskPayload(self, mask, payload):
@@ -137,11 +142,12 @@ class HTTP:
 				'mask': data[offset:offset+4] if masked else False,
 				'payload': self.unmaskPayload(data[offset:offset+4], data[offset+4:]) if masked else data[offset:]
 			})
+
 		return parsed_frame
 
-	def createFrame(self, payload):
+	def createFrame(self, payload, header_code=129):
 		size = len(payload)
-		header = chr(129) # Fin, Text Frame
+		header = chr(header_code) # Fin, Text Frame
 		if size <= 125:
 			header += pack("!B", size)
 		elif size <= 65535 :
