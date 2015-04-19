@@ -99,8 +99,6 @@ class HTTP:
 		return decoded
 
 	def parseFrame(self, data):
-		c2b = lambda c: "{0:08b}".format(ord(c)) # Support converter
-		
 		### First Byte Section ####
 		first_byte_flags = ['fin', 'rsv1', 'rsv2', 'rsv3']
 		opt_codes =  {
