@@ -109,12 +109,12 @@ class HTTP:
 			'1001': 'ping',
 			'1010': 'pong'
 		}
-		first_byte = c2b(data[0])
+		first_byte = "{0:08b}".format(ord(data[0]))
 		flags = dict(zip(first_byte_flags, list(first_byte[:4])))
 		opcode = opt_codes[first_byte[4:]]
 		
 		### Second Byte Section ###
-		second_byte = c2b(data[1])
+		second_byte = "{0:08b}".format(ord(data[1]))
 		masked = second_byte[0]
 		offset = 2 if masked else 0
 		size = int(second_byte[1:], 2)
